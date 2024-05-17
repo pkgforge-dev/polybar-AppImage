@@ -1,0 +1,55 @@
+name: Polybar AppImage
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  schedule:
+    - cron: "0 16 1/14 * *"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: build
+      run: |
+        sudo apt update
+        sudo apt install libfuse2 gcc xsltproc autopoint polybar libcairo2-dev xcb-proto python-sphinx
+        sudo apt install python-packaging libuv1-dev pkg-config libxcb-cursor-dev libxcb-util-dev libnl-genl-3-dev
+        sudo apt install python3-sphinx libxcb-xkb-dev i3-wm libjsoncpp-dev xcb-util-image libmpdclient
+        sudo apt install libncursesw5-dev autotools-dev autoconf automake build-essential meson ninja-build
+        wget https://raw.githubusercontent.com/Samueru-sama/polybar-AppImage/main/polybar-appimage.sh
+        chmod a+x ./polybar-appimage.sh
+        ./polybar-appimage.sh
+        mkdir dist
+        mv *AppImage dist/
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: Polybar-x86_64.AppImage
+        path: 'dist'
+        
+  release:
+      needs: [build]
+      permissions: write-all
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/download-artifact@v1
+          with:
+            name: Polybar-x86_64.AppImage
+
+        - name: release
+          uses: marvinpinto/action-automatic-releases@latest
+          with:
+            title: Continuous build
+            automatic_release_tag: continuous
+            prerelease: false
+            draft: false
+            files: |
+              Clipman-x86_64.AppImage
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
