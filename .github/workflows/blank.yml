@@ -20,7 +20,7 @@ jobs:
         sudo apt install libfuse2 gcc xsltproc autopoint polybar libcairo2-dev xcb-proto libnl-genl-3-dev libxcb-composite0-dev libxcb-xrm-dev libxcb1-dev
         sudo apt install libuv1-dev pkg-config libxcb-cursor-dev libxcb-util-dev python3-pip libxcb-randr0-dev libxcb-util0-dev libcurlpp-dev libcurl4-openssl-dev
         sudo pip3 install packaging
-        sudo apt install python3-sphinx libxcb-xkb-dev i3-wm libjsoncpp-dev libxcb-image0-dev libmpdclient-dev libxcb-icccm4-dev libalsaplayer-dev
+        sudo apt install python3-sphinx libxcb-xkb-dev i3-wm libjsoncpp-dev libxcb-image0-dev libmpdclient-dev libxcb-icccm4-dev libalsaplayer-dev libalsaplayer0
         sudo apt install libncursesw5-dev autotools-dev autoconf automake build-essential meson ninja-build libxcb-ewmh-dev python3-xcbgen libpulse-dev
         wget https://raw.githubusercontent.com/Samueru-sama/polybar-AppImage/main/polybar-appimage.sh
         chmod a+x ./polybar-appimage.sh
