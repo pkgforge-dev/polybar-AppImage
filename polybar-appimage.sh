@@ -49,6 +49,7 @@ Name=polybar
 Icon=polybar
 Exec=polybar
 Categories=System
+Hidden=true
 EOF
 
 # Icon
