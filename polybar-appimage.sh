@@ -22,6 +22,7 @@ git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/u
 && ninja -C build && ninja -C build install && cd .. || exit 1
 
 mv ./usr/* ./ && rm -rf ./polybar ./libmpdclient ./usr || exit 1
+mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
 
 # AppRun
 cat >> ./AppRun << 'EOF'
