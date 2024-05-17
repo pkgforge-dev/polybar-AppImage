@@ -15,7 +15,7 @@ CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
 CXXFLAGS='-static -O3' 
 LDFLAGS="-static"
 
-git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake .. \
+git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
 git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/usr" \
