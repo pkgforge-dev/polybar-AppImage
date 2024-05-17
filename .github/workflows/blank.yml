@@ -52,5 +52,5 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              Clipman-x86_64.AppImage
+              Polybar-x86_64.AppImage
             repo_token: ${{ secrets.GITHUB_TOKEN }}
