@@ -22,11 +22,22 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/usr" \
 && ninja -C build && ninja -C build install && cd .. || exit 1
 
-git clone "$LIB2" && cd jsoncpp && meson setup build -Dprefix="$CURRENTDIR/usr" && ninja -C build \
-&& ninja -C build install && cd .. && ln -s libjsoncpp.so ./usr/lib/libjsoncpp.so.1 || exit 1
+#git clone "$LIB2" && cd jsoncpp && meson setup build -Dprefix="$CURRENTDIR/usr" && ninja -C build \
+#&& ninja -C build install && cd .. && ln -s libjsoncpp.so ./usr/lib/libjsoncpp.so.1 || exit 1
 
-mv ./usr/* ./ && rm -rf ./polybar ./libmpdclient ./usr ./jsoncpp || exit 1
+mv ./usr/* ./ && rm -rf ./polybar ./libmpdclient ./usr ./jsoncpp
 mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
+
+cp /usr/lib/libjsoncpp.so.1 ./lib
+cp /usr/lib/libcairo.so.2 ./lib
+cp /usr/lib/libogg.so.0 ./lib
+cp /usr/lib/libvorbisenc.so.2 ./lib
+cp /usr/lib/libFLAC.so.12 ./lib
+cp /usr/lib/libopus.so.0 ./lib
+cp /usr/lib/libmpg123.so.0 ./lib
+cp /usr/lib/libmp3lame.so.0 ./lib
+cp /usr/lib/libvorbis.so.0 ./lib
+
 
 # AppRun
 cat >> ./AppRun << 'EOF'
