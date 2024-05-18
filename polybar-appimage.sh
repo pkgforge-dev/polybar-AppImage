@@ -28,16 +28,7 @@ git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/u
 mv ./usr/* ./ && rm -rf ./polybar ./libmpdclient ./usr ./jsoncpp
 mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
 
-cp /lib/libjsoncpp.so.1 ./lib
-cp /lib/libcairo.so.2 ./lib
-cp /lib/libogg.so.0 ./lib
-cp /lib/libvorbisenc.so.2 ./lib
-cp /lib/libFLAC.so.12 ./lib
-cp /lib/libopus.so.0 ./lib
-cp /lib/libmpg123.so.0 ./lib
-cp /lib/libmp3lame.so.0 ./lib
-cp /lib/libvorbis.so.0 ./lib
-ls /lib
+ldd ./bin/polybar
 
 
 # AppRun
