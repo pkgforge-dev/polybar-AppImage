@@ -19,17 +19,23 @@ LDFLAGS="-static"
 git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
-git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/usr" \
-&& ninja -C build && ninja -C build install && cd .. || exit 1
+#git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/usr" \
+#&& ninja -C build && ninja -C build install && cd .. || exit 1
 
 #git clone "$LIB2" && cd jsoncpp && meson setup build -Dprefix="$CURRENTDIR/usr" && ninja -C build \
 #&& ninja -C build install && cd .. && ln -s libjsoncpp.so ./usr/lib/libjsoncpp.so.1 || exit 1
 
-mv ./usr/* ./ && rm -rf ./polybar ./libmpdclient ./usr ./jsoncpp
-mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
+mv ./usr/* ./ && rm -rf ./polybar ./usr
+#mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
 
-ldd ./bin/polybar
-
+mkdir ./lib
+cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
+cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
+cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
+cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
 
 # AppRun
 cat >> ./AppRun << 'EOF'
