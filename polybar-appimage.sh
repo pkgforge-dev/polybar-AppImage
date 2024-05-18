@@ -3,8 +3,6 @@
 APP=polybar
 APPDIR="$APP".AppDir
 REPO="https://github.com/polybar/polybar"
-LIB="https://github.com/MusicPlayerDaemon/libmpdclient.git"
-LIB2="https://github.com/open-source-parsers/jsoncpp.git"
 ICON="https://user-images.githubusercontent.com/36028424/39958898-230ddeec-563c-11e8-8318-d658c63ddf22.png"
 
 # CREATE DIRECTORIES
@@ -19,16 +17,8 @@ LDFLAGS="-static"
 git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
-#git clone "$LIB" && cd libmpdclient && meson setup build -Dprefix="$CURRENTDIR/usr" \
-#&& ninja -C build && ninja -C build install && cd .. || exit 1
-
-#git clone "$LIB2" && cd jsoncpp && meson setup build -Dprefix="$CURRENTDIR/usr" && ninja -C build \
-#&& ninja -C build install && cd .. && ln -s libjsoncpp.so ./usr/lib/libjsoncpp.so.1 || exit 1
-
-mv ./usr/* ./ && rm -rf ./polybar ./usr
-#mv ./lib/x*/* ./lib # For some reason in the ubuntu runner the lib gets installed inside another directory
-
-mkdir ./lib
+# ADD LIBRARIES
+mv ./usr/* ./ && rm -rf ./polybar ./usr && mkdir ./lib || exit 1
 cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
 cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
 cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
@@ -36,6 +26,7 @@ cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
 cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
 cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
 cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
+ldd ./bin/polybar
 
 # AppRun
 cat >> ./AppRun << 'EOF'
