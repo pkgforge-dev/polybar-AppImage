@@ -39,7 +39,7 @@ fi
 EOF
 chmod a+x ./AppRun
 
-APPVERSION=$(polybar --version | awk 'FNR == 1 {print $2}')
+APPVERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
 
 # Desktop
 cat >> ./"$APP.desktop" << 'EOF'
