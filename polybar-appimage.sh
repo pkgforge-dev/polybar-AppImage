@@ -19,14 +19,18 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 
 # ADD LIBRARIES
 mv ./usr/* ./ && rm -rf ./polybar ./usr && mkdir ./lib || exit 1
-cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
-cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
-cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
-cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
-cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
-cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
-cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
-ldd ./bin/polybar
+LIBSPATH=$(ldd ./bin/polybar | awk '{print $3}')
+mkdir ./lib
+cp $LIBSPATH ./lib
+
+#cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
+#cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
+#cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
+#cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
+#cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
+#cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
+#cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
+#ldd ./bin/polybar
 
 # AppRun
 cat >> ./AppRun << 'EOF'
