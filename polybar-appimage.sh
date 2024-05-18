@@ -19,24 +19,25 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 
 # ADD LIBRARIES
 mv ./usr/* ./ && rm -rf ./polybar ./usr && mkdir ./lib || exit 1
-LIBSPATH=$(ldd ./bin/polybar | awk '{print $3}')
-cp $LIBSPATH ./lib
+#LIBSPATH=$(ldd ./bin/polybar | awk '{print $3}')
+#cp $LIBSPATH ./lib
+#rm -f ./lib/libc.so* ./lib/libcrypto.so* ./lib/libstdc++.so* libgnutls.so*
 
-#cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
-#cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
-#cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
-#cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
-#cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
-#cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
-#cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
-#ldd ./bin/polybar
+cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libjsoncpp.so.1 ./lib
+cp /lib/x86_64-linux-gnu/libcairo.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libogg.so.0 ./lib
+cp /lib/x86_64-linux-gnu/libvorbisenc.so.2 ./lib
+cp /lib/x86_64-linux-gnu/libFLAC.so.8 ./lib
+cp /lib/x86_64-linux-gnu/libvorbis.so.0 ./lib
+ldd ./bin/polybar
 
 # AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/bash
 
 CURRENTDIR="$(readlink -f "$(dirname "$0")")"
-export LD_LIBRARY_PATH="$CURRENTDIR/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="/lib:$CURRENTDIR/lib:$LD_LIBRARY_PATH"
 
 if [ "$1" = "msg" ]; then
 	"$CURRENTDIR/bin/polybar-msg" "${@:2}"
