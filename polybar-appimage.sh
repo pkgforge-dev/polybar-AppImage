@@ -20,7 +20,6 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 # ADD LIBRARIES
 mv ./usr/* ./ && rm -rf ./polybar ./usr && mkdir ./lib || exit 1
 LIBSPATH=$(ldd ./bin/polybar | awk '{print $3}')
-mkdir ./lib
 cp $LIBSPATH ./lib
 
 #cp /lib/x86_64-linux-gnu/libmpdclient.so.2 ./lib
