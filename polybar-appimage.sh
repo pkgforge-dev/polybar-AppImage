@@ -29,7 +29,7 @@ cat >> ./AppRun << 'EOF'
 #!/bin/bash
 
 CURRENTDIR="$(readlink -f "$(dirname "$0")")"
-export LD_LIBRARY_PATH="$CURRENTDIR/lib":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$CURRENTDIR/lib:$LD_LIBRARY_PATH"
 
 if [ "$1" = "msg" ]; then
 	"$CURRENTDIR/bin/polybar-msg" "${@:2}"
