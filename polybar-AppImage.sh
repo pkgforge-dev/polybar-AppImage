@@ -60,6 +60,9 @@ ls polybar*mage && rm -rf ./polybar.AppDir
 ./polybar*mage --appimage-extract && mv ./squashfs-root ./polybar.AppDir && rm -f ./polybar*mage
 APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')
 wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./appimagetool
+
+# Do the thing!
+ARCH=x86_64 VERSION="$APPVERSION" ./appimagetool -s ./"$APPDIR"
 ls ./*.AppImage || { echo "appimagetool failed to make the appimage"; exit 1; }
 [ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" || exit 1
 echo "All Done!"
