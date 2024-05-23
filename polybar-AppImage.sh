@@ -53,6 +53,5 @@ ln -s ./polybar.png ./.DirIcon
 # MAKE APPIMAGE
 cd ..
 wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-static-x86_64.AppImage -O linuxdeploy
-chmod a+x ./linuxdeploy
-NO_STRIP=true ./linuxdeploy --appdir polybar.AppDir --executable polybar.AppDir/usr/bin/polybar --output appimage
+chmod a+x ./linuxdeploy && ./linuxdeploy --appdir polybar.AppDir --executable polybar.AppDir/usr/bin/polybar --output appimage
 mv *olybar*mage ../
