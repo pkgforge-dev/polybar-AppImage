@@ -24,7 +24,7 @@ jobs:
         sudo apt install libncursesw5-dev autotools-dev autoconf automake build-essential ninja-build libxcb-ewmh-dev python3-xcbgen libpulse-dev libmpdclient2
         wget https://raw.githubusercontent.com/Samueru-sama/polybar-AppImage/main/polybar-AppImage.sh
         chmod a+x ./polybar-AppImage.sh
-        ./polybar-appimage.sh
+        ./polybar-AppImage.sh
         mkdir dist
         mv *AppImage dist/
 
