@@ -23,8 +23,7 @@ mkdir ./usr/lib ./ & rm -rf ./polybar
 # AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/bash
-
-CURRENTDIR="$(readlink -f "$(dirname "$0")")"
+CURRENTDIR="$(dirname "$(readlink -f "$0")")"
 if [ "$1" = "msg" ]; then
 	"$CURRENTDIR/usr/bin/polybar-msg" "${@:2}"
 else
