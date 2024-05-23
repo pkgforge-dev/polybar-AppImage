@@ -12,8 +12,7 @@ mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
 
 # DOWNLOAD AND BUILD POLYBAR STATICALLY
 CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
-CXXFLAGS='-O3' 
-#LDFLAGS="-static"
+CXXFLAGS='-O3'
 
 git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
