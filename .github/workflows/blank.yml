@@ -22,8 +22,8 @@ jobs:
         sudo pip3 install packaging meson
         sudo apt install python3-sphinx libxcb-xkb-dev i3-wm libjsoncpp-dev libxcb-image0-dev libmpdclient-dev libxcb-icccm4-dev libalsaplayer-dev libalsaplayer0
         sudo apt install libncursesw5-dev autotools-dev autoconf automake build-essential ninja-build libxcb-ewmh-dev python3-xcbgen libpulse-dev libmpdclient2
-        wget https://raw.githubusercontent.com/Samueru-sama/polybar-AppImage/main/polybar-appimage.sh
-        chmod a+x ./polybar-appimage.sh
+        wget https://raw.githubusercontent.com/Samueru-sama/polybar-AppImage/main/polybar-AppImage.sh
+        chmod a+x ./polybar-AppImage.sh
         ./polybar-appimage.sh
         mkdir dist
         mv *AppImage dist/
