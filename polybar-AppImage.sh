@@ -57,7 +57,7 @@ chmod a+x ./linuxdeploy && ./linuxdeploy --appdir polybar.AppDir --executable po
 
 # LIBFUSE3
 ls polybar*mage && rm -rf ./polybar.AppDir
-./polybar*mage --appimage-extract && mv ./squashfs-root ./polybar.AppDir
+./polybar*mage --appimage-extract && mv ./squashfs-root ./polybar.AppDir && rm -f ./polybar*mage
 APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')
 wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./appimagetool
 ls ./*.AppImage || { echo "appimagetool failed to make the appimage"; exit 1; }
