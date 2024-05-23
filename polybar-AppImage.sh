@@ -54,4 +54,15 @@ ln -s ./polybar.png ./.DirIcon
 cd ..
 wget https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-static-x86_64.AppImage -O linuxdeploy
 chmod a+x ./linuxdeploy && ./linuxdeploy --appdir polybar.AppDir --executable polybar.AppDir/usr/bin/polybar --output appimage
-mv *olybar*mage ../
+
+# LIBFUSE3
+ls polybar*mage && rm -rf ./polybar.AppDir
+./polybar*mage --appimage-extract && mv ./squashfs-root ./polybar.AppDir
+APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')
+wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./appimagetool
+ls ./*.AppImage || { echo "appimagetool failed to make the appimage"; exit 1; }
+[ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" || exit 1
+echo "All Done!"
+
+
+
