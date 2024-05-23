@@ -59,7 +59,6 @@ APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releas
 
 [ -n "$APPDIR" ] && ls *AppImage && rm -rf ./"$APPDIR" || exit 1
 ./*AppImage --appimage-extract && mv ./squashfs-root ./"$APPDIR" && rm -f ./*AppImage && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./appimagetool || exit 1
-rm ./"$APPDIR"/rofi-theme-selector* # Why does this get created?
 
 # Do the thing!
 ARCH=x86_64 VERSION="$APPVERSION" ./appimagetool -s ./"$APPDIR" || exit 1
