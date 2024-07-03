@@ -1,5 +1,5 @@
 #!/bin/sh
-
+set -u
 ARCH=x86_64
 APP=polybar
 APPDIR="$APP".AppDir
@@ -11,8 +11,7 @@ LINUXDEPLOY="https://github.com/linuxdeploy/linuxdeploy/releases/download/contin
 APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/"/ /g; s/ /\n/g' | grep -o 'https.*continuous.*tool.*86_64.*mage$')
 
 # CREATE DIRECTORIES
-if [ -z "$APP" ]; then exit 1; fi
-mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
+[ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
 
 # DOWNLOAD AND BUILD POLYBAR STATICALLY
 CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
