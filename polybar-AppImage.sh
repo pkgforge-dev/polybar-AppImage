@@ -8,7 +8,7 @@ ICON="https://user-images.githubusercontent.com/36028424/39958898-230ddeec-563c-
 EXEC="$APP"
 
 LINUXDEPLOY="https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-static-x86_64.AppImage"
-APPIMAGETOOL=$(wget -q https://api.github.com/repos/probonopd/go-appimage/releases -O - | sed 's/[()",{} ]/\n/g' | grep -oi 'https.*continuous.*tool.*x86_64.*mage$' | head -1)
+APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 
 # CREATE DIRECTORIES
 [ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
@@ -53,7 +53,10 @@ wget "$ICON" -O ./polybar.png || touch ./polybar.png
 ln -s ./polybar.png ./.DirIcon
 
 # MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
+export VERSION="$APPVERSION"
+export ARCH=x86_64
 cd .. && wget "$LINUXDEPLOY" -O linuxdeploy && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./linuxdeploy ./appimagetool \
-&& ./linuxdeploy --appdir "$APPDIR" --executable "$APPDIR"/usr/bin/"$EXEC" && VERSION="$APPVERSION" ./appimagetool -s ./"$APPDIR" || exit 1
+&& ./linuxdeploy --appdir "$APPDIR" --executable "$APPDIR"/usr/bin/"$EXEC" || exit 1
+./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 ./"$APP".AppDir "$APP"-"$VERSION"-"$ARCH".AppImage
 
 [ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" && echo "All Done!" || exit 1
