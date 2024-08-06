@@ -50,7 +50,7 @@ EOF
 
 # Icon
 wget "$ICON" -O ./polybar.png || touch ./polybar.png
-ln -s ./polybar.png ./.DirIcon
+ln -s polybar.png ./.DirIcon
 
 # MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
 export VERSION="$APPVERSION"
