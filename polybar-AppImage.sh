@@ -25,17 +25,33 @@ mkdir ./usr/lib ./ & rm -rf ./polybar
 
 # AppRun
 cat >> ./AppRun << 'EOF'
-#!/bin/bash
+#!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-if [ "$1" = "msg" ]; then
-	"$CURRENTDIR/usr/bin/polybar-msg" "${@:2}"
-else
-	"$CURRENTDIR/usr/bin/polybar" "$@"
-fi
+export PATH="$PATH:$CURRENTDIR/usr/bin"
+BIN="$ARGV0"
+unset ARGV0
+case "$BIN" in
+	'polybar'|'polybar-msg')
+		exec "$CURRENTDIR/usr/bin/$BIN" "$@"
+		;;
+
+	*)
+		if [ "$1" = '--msg' ]; then
+			shift
+			"$CURRENTDIR"/usr/bin/polybar-msg "$@"
+		else
+			"$CURRENTDIR"/usr/bin/polybar "$@"
+			echo "AppImage command:"
+			echo " \"$APPIMAGE --msg\"         Launches polybar-msg"
+			echo "You can also symlink the appimage with the name polybar-msg"
+			echo "and by launching that symlink it will automatically run"
+			echo "polybar-msg without having to pass any extra arguments"
+		fi
+		;;
+esac
 EOF
 chmod a+x ./AppRun
-
-APPVERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
+VERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
 
 # Desktop
 cat >> ./"$APP.desktop" << 'EOF'
@@ -53,7 +69,6 @@ wget "$ICON" -O ./polybar.png || touch ./polybar.png
 ln -s polybar.png ./.DirIcon
 
 # MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
-export VERSION="$APPVERSION"
 export ARCH=x86_64
 cd .. && wget "$LINUXDEPLOY" -O linuxdeploy && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./linuxdeploy ./appimagetool \
 && ./linuxdeploy --appdir "$APPDIR" --executable "$APPDIR"/usr/bin/"$EXEC" || exit 1
