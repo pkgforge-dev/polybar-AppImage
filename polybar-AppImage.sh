@@ -22,13 +22,11 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
 # ADD LIBRARIES
-mkdir ./usr/lib ./ & rm -rf ./polybar
+mkdir ./usr/lib && rm -rf ./polybar
 mv ./usr ./shared
-
 wget "$LIB4BN" -O ./lib4bin && wget "$SHARUN" -O ./sharun || exit 1
 chmod +x ./lib4bin ./sharun
 HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
-
 
 # AppRun
 cat >> ./AppRun << 'EOF'
@@ -37,22 +35,38 @@ CURRENTDIR="$(dirname "$(readlink -f "$0")")"
 export PATH="$PATH:$CURRENTDIR/bin"
 BIN="$ARGV0"
 unset ARGV0
+[ -z "$BIN" ] && BIN=polybar
+
+_multi_bar() {
+	if [ "$1" = "--bars" ]; then
+		shift
+		for bar in "$@"; do
+			exec "$CURRENTDIR/bin/$BIN" "$bar" &
+		done
+	else
+		exec "$CURRENTDIR/bin/$BIN" "$@"
+	fi
+}
+
 case "$BIN" in
 	'polybar'|'polybar-msg')
-		exec "$CURRENTDIR/bin/$BIN" "$@"
+		_multi_bar "$@"
 		;;
-
 	*)
 		if [ "$1" = '--msg' ]; then
 			shift
-			"$CURRENTDIR"/bin/polybar-msg "$@"
+			exec "$CURRENTDIR"/bin/polybar-msg "$@"
 		else
-			"$CURRENTDIR"/bin/polybar "$@"
+			_multi_bar "$@"
 			echo "AppImage command:"
 			echo " \"$APPIMAGE --msg\"         Launches polybar-msg"
 			echo "You can also symlink the appimage with the name polybar-msg"
 			echo "and by launching that symlink it will automatically run"
 			echo "polybar-msg without having to pass any extra arguments"
+			echo ""
+			echo "AppImage also supports the \"--bars\" flag which lets you"
+			echo "run multiple polybar instances with a single command"
+			echo "EXAMPLE: \"$APPIMAGE\" --bars bar1 bar2 bar3"
 		fi
 		;;
 esac
