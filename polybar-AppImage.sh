@@ -9,6 +9,7 @@ EXEC="$APP"
 
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
+SHARUN="https://bin.ajam.dev/$(uname -m)/sharun"
 
 # CREATE DIRECTORIES
 [ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
