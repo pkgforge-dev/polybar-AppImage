@@ -58,7 +58,8 @@ case "$BIN" in
 esac
 EOF
 chmod a+x ./AppRun
-VERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
+#VERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
+VERSION=test
 
 # Desktop
 cat >> ./"$APP.desktop" << 'EOF'
