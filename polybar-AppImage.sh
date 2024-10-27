@@ -20,8 +20,6 @@ CXXFLAGS='-O3'
 git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
-exit
-
 # ADD LIBRARIES
 mkdir ./usr/lib ./ & rm -rf ./polybar
 mv ./usr ./shared
