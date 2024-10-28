@@ -7,8 +7,9 @@ REPO="https://github.com/polybar/polybar"
 ICON="https://user-images.githubusercontent.com/36028424/39958898-230ddeec-563c-11e8-8318-d658c63ddf22.png"
 EXEC="$APP"
 
-LINUXDEPLOY="https://github.com/linuxdeploy/linuxdeploy/releases/download/1-alpha-20240109-1/linuxdeploy-static-x86_64.AppImage"
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
+LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
+SHARUN="https://bin.ajam.dev/$(uname -m)/sharun"
 
 # CREATE DIRECTORIES
 [ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
@@ -21,37 +22,45 @@ git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake 
 && make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
 
 # ADD LIBRARIES
-mkdir ./usr/lib ./ & rm -rf ./polybar
+mkdir ./usr/lib && rm -rf ./polybar
+mv ./usr ./shared
+wget "$LIB4BN" -O ./lib4bin && wget "$SHARUN" -O ./sharun || exit 1
+chmod +x ./lib4bin ./sharun
+HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
 
 # AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-export PATH="$PATH:$CURRENTDIR/usr/bin"
-BIN="$ARGV0"
+export PATH="$CURRENTDIR/bin:$PATH"
+BIN="${ARGV0#./}"
 unset ARGV0
-case "$BIN" in
-	'polybar'|'polybar-msg')
-		exec "$CURRENTDIR/usr/bin/$BIN" "$@"
-		;;
+[ -z "$APPIMAGE" ] && APPIMAGE="$0"
+[ ! -e "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
 
-	*)
-		if [ "$1" = '--msg' ]; then
-			shift
-			"$CURRENTDIR"/usr/bin/polybar-msg "$@"
-		else
-			"$CURRENTDIR"/usr/bin/polybar "$@"
-			echo "AppImage command:"
-			echo " \"$APPIMAGE --msg\"         Launches polybar-msg"
-			echo "You can also symlink the appimage with the name polybar-msg"
-			echo "and by launching that symlink it will automatically run"
-			echo "polybar-msg without having to pass any extra arguments"
-		fi
-		;;
-esac
+if [ "$1" = "--bars" ]; then
+	shift
+	for bar in "$@"; do
+		exec "$CURRENTDIR/bin/polybar" "$bar" &
+	done
+elif [ "$1" = '--msg' ]; then
+	shift
+	exec "$CURRENTDIR"/bin/polybar-msg "$@"
+else
+	exec "$CURRENTDIR/bin/$BIN" "$@"
+	echo "AppImage commands:"
+	echo " \"$APPIMAGE --msg\"                 Launches polybar-msg"
+	echo " \"$APPIMAGE --bars bar1 bar2 bar3\" Launches multiple bars"
+	echo ""
+	echo "You can also symlink the appimage with the name polybar-msg"
+	echo "and by launching that symlink it will automatically run"
+	echo "polybar-msg without having to pass any extra arguments"
+	echo "AppImage also supports the \"--bars\" flag which lets you"
+	echo "run multiple polybar instances with a single command"
+fi
 EOF
 chmod a+x ./AppRun
-VERSION=$(./AppRun --version | awk 'FNR == 1 {print $2}')
+VERSION=$(./shared/bin/polybar --version | awk 'FNR == 1 {print $2}')
 
 # Desktop
 cat >> ./"$APP.desktop" << 'EOF'
@@ -70,9 +79,8 @@ ln -s polybar.png ./.DirIcon
 
 # MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
 export ARCH=x86_64
-cd .. && wget "$LINUXDEPLOY" -O linuxdeploy && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod a+x ./linuxdeploy ./appimagetool \
-&& ./linuxdeploy --appdir "$APPDIR" --executable "$APPDIR"/usr/bin/"$EXEC" || exit 1
+cd .. && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod +x ./appimagetool || exit 1
 echo "Making appimage"
-./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 20 ./"$APP".AppDir "$APP"-"$VERSION"-"$ARCH".AppImage
+./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 ./"$APP".AppDir "$APP"-"$VERSION"-"$ARCH".AppImage
 
 [ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" && echo "All Done!" || exit 1
