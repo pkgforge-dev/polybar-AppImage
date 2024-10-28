@@ -32,44 +32,32 @@ HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-export PATH="$PATH:$CURRENTDIR/bin"
-BIN="$ARGV0"
+export PATH="$CURRENTDIR/bin:$PATH"
+BIN="${ARGV0#./}"
 unset ARGV0
-[ -z "$BIN" ] && BIN=polybar
+[ -z "$APPIMAGE" ] && APPIMAGE="$0"
+[ ! -e "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
 
-_multi_bar() {
-	if [ "$1" = "--bars" ]; then
-		shift
-		for bar in "$@"; do
-			exec "$CURRENTDIR/bin/$BIN" "$bar" &
-		done
-	else
-		exec "$CURRENTDIR/bin/$BIN" "$@"
-	fi
-}
-
-case "$BIN" in
-	'polybar'|'polybar-msg')
-		_multi_bar "$@"
-		;;
-	*)
-		if [ "$1" = '--msg' ]; then
-			shift
-			exec "$CURRENTDIR"/bin/polybar-msg "$@"
-		else
-			_multi_bar "$@"
-			echo "AppImage command:"
-			echo " \"$APPIMAGE --msg\"         Launches polybar-msg"
-			echo "You can also symlink the appimage with the name polybar-msg"
-			echo "and by launching that symlink it will automatically run"
-			echo "polybar-msg without having to pass any extra arguments"
-			echo ""
-			echo "AppImage also supports the \"--bars\" flag which lets you"
-			echo "run multiple polybar instances with a single command"
-			echo "EXAMPLE: \"$APPIMAGE\" --bars bar1 bar2 bar3"
-		fi
-		;;
-esac
+if [ "$1" = "--bars" ]; then
+	shift
+	for bar in "$@"; do
+		exec "$CURRENTDIR/bin/polybar" "$bar" &
+	done
+elif [ "$1" = '--msg' ]; then
+	shift
+	exec "$CURRENTDIR"/bin/polybar-msg "$@"
+else
+	exec "$CURRENTDIR/bin/$BIN" "$@"
+	echo "AppImage commands:"
+	echo " \"$APPIMAGE --msg\"                 Launches polybar-msg"
+	echo " \"$APPIMAGE --bars bar1 bar2 bar3\" Launches multiple bars"
+	echo ""
+	echo "You can also symlink the appimage with the name polybar-msg"
+	echo "and by launching that symlink it will automatically run"
+	echo "polybar-msg without having to pass any extra arguments"
+	echo "AppImage also supports the \"--bars\" flag which lets you"
+	echo "run multiple polybar instances with a single command"
+fi
 EOF
 chmod a+x ./AppRun
 VERSION=$(./shared/bin/polybar --version | awk 'FNR == 1 {print $2}')
