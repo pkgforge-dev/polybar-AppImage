@@ -42,6 +42,9 @@ unset ARGV0
 [ -z "$APPIMAGE" ] && APPIMAGE="$0"
 [ ! -f "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
 
+# we patched a relative path in polybar, so we cd here
+cd "$CURRENTDIR"
+
 if [ "$1" = "--bars" ]; then
 	shift
 	for bar in "$@"; do
