@@ -32,11 +32,18 @@ HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
+CONFIGDIR="${XDG_CONFIG_HOME:-$HOME/.config}"/polybar
 export PATH="$CURRENTDIR/bin:$PATH"
 BIN="${ARGV0#./}"
 unset ARGV0
 [ -z "$APPIMAGE" ] && APPIMAGE="$0"
-[ ! -e "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
+[ ! -f "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
+
+if [ -z "$(ls -A "$CONFIGDIR" 2>/dev/null)" ]; then
+	echo "Placing default user config in $CONFIGDIR"
+	mkdir -p "$CONFIGDIR"
+	cp "$CURRENTDIR"/etc/polybar/config.ini "$CONFIGDIR"
+fi
 
 if [ "$1" = "--bars" ]; then
 	shift
