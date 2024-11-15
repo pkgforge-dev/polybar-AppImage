@@ -28,22 +28,19 @@ wget "$LIB4BN" -O ./lib4bin && wget "$SHARUN" -O ./sharun || exit 1
 chmod +x ./lib4bin ./sharun
 HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
 
+# Patch polybar binary so that it finds its default "/etc" config in the AppDir
+sed -i 's|/etc|././|g' ./shared/bin/polybar
+ln -s ./etc/polybar ./polybar
+
 # AppRun
 cat >> ./AppRun << 'EOF'
 #!/bin/sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
-CONFIGDIR="${XDG_CONFIG_HOME:-$HOME/.config}"/polybar
 export PATH="$CURRENTDIR/bin:$PATH"
 BIN="${ARGV0#./}"
 unset ARGV0
 [ -z "$APPIMAGE" ] && APPIMAGE="$0"
 [ ! -f "$CURRENTDIR/bin/$BIN" ] && BIN=polybar
-
-if [ -z "$(ls -A "$CONFIGDIR" 2>/dev/null)" ]; then
-	echo "Placing default user config in $CONFIGDIR"
-	mkdir -p "$CONFIGDIR"
-	cp "$CURRENTDIR"/etc/polybar/config.ini "$CONFIGDIR"
-fi
 
 if [ "$1" = "--bars" ]; then
 	shift
