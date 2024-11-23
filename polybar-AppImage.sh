@@ -1,32 +1,43 @@
 #!/bin/sh
-set -u
-ARCH=x86_64
+
+set -eu
+
+export ARCH="$(uname -m)"
+export APPIMAGE_EXTRACT_AND_RUN=1
+
 APP=polybar
-APPDIR="$APP".AppDir
 REPO="https://github.com/polybar/polybar"
 ICON="https://user-images.githubusercontent.com/36028424/39958898-230ddeec-563c-11e8-8318-d658c63ddf22.png"
-EXEC="$APP"
 
 APPIMAGETOOL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
 LIB4BN="https://raw.githubusercontent.com/VHSgunzo/sharun/refs/heads/main/lib4bin"
 SHARUN="https://bin.ajam.dev/$(uname -m)/sharun"
 
 # CREATE DIRECTORIES
-[ -n "$APP" ] && mkdir -p ./"$APP/$APPDIR" && cd ./"$APP/$APPDIR" || exit 1
+mkdir -p ./"$APP"/AppDir
+cd ./"$APP"/AppDir
 
-# DOWNLOAD AND BUILD POLYBAR STATICALLY
+# DOWNLOAD AND BUILD POLYBAR
 CURRENTDIR="$(readlink -f "$(dirname "$0")")" # DO NOT MOVE THIS
 CXXFLAGS='-O3'
 
-git clone --recursive "$REPO" && cd polybar && mkdir build && cd build && cmake -DENABLE_ALSA=ON .. \
-&& make -j$(nproc) && make install DESTDIR="$CURRENTDIR" && cd ../.. || exit 1
+git clone --recursive "$REPO" polybar
+( cd polybar
+	mkdir build
+	cd build
+	cmake -DENABLE_ALSA=ON ..
+	make -j$(nproc)
+	make install DESTDIR="$CURRENTDIR"
+)
+rm -rf ./polybar
 
 # ADD LIBRARIES
-mkdir ./usr/lib && rm -rf ./polybar
+mkdir ./usr/lib
 mv ./usr ./shared
-wget "$LIB4BN" -O ./lib4bin && wget "$SHARUN" -O ./sharun || exit 1
-chmod +x ./lib4bin ./sharun
-HARD_LINKS=1 ./lib4bin ./shared/bin/* && rm -f ./lib4bin || exit 1
+wget "$LIB4BN" -O ./lib4bin
+chmod +x ./lib4bin
+./lib4bin -p -v -r -s ./shared/bin/*
+rm -f ./lib4bin
 
 # Patch polybar binary so that it finds its default "/etc" config in the AppDir
 sed -i 's|/etc|././|g' ./shared/bin/polybar
@@ -34,7 +45,7 @@ ln -s ./etc/polybar ./polybar
 
 # AppRun
 cat >> ./AppRun << 'EOF'
-#!/bin/sh
+#!/usr/bin/env sh
 CURRENTDIR="$(dirname "$(readlink -f "$0")")"
 export PATH="$CURRENTDIR/bin:$PATH"
 BIN="${ARGV0#./}"
@@ -85,9 +96,16 @@ wget "$ICON" -O ./polybar.png || touch ./polybar.png
 ln -s polybar.png ./.DirIcon
 
 # MAKE APPIMAGE USING FUSE3 COMPATIBLE APPIMAGETOOL
-export ARCH=x86_64
-cd .. && wget -q "$APPIMAGETOOL" -O ./appimagetool && chmod +x ./appimagetool || exit 1
-echo "Making appimage"
-./appimagetool --comp zstd --mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 ./"$APP".AppDir "$APP"-"$VERSION"-"$ARCH".AppImage
+cd ..
+wget -q "$APPIMAGETOOL" -O ./appimagetool
+chmod +x ./appimagetool
 
-[ -n "$APP" ] && mv ./*.AppImage .. && cd .. && rm -rf ./"$APP" && echo "All Done!" || exit 1
+echo "Making appimage..."
+./appimagetool --comp zstd \
+	--mksquashfs-opt -Xcompression-level --mksquashfs-opt 22 \
+	-n -u "$UPINFO" "$PWD"/AppDir "$PWD"/"$APP"-"$VERSION"-anylinux-"$ARCH".AppImage
+
+mv ./*.AppImage* ..
+cd ..
+rm -rf ./"$APP"
+echo "All Done!"
