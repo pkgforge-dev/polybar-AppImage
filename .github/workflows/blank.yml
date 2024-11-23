@@ -5,7 +5,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 16 1/14 * *"
+    - cron: "0 16 1/20 * *"
   workflow_dispatch:
 
 jobs:
@@ -23,17 +23,16 @@ jobs:
           libcurl4-openssl-dev libxcb-ewmh2 python3-sphinx libxcb-xkb-dev i3-wm libjsoncpp-dev \
           libxcb-image0-dev libmpdclient-dev libxcb-icccm4-dev libalsaplayer-dev libalsaplayer0 \
           libncursesw5-dev autotools-dev autoconf automake build-essential ninja-build \
-          libxcb-ewmh-dev python3-xcbgen libpulse-dev libmpdclient2 desktop-file-utils
+          libxcb-ewmh-dev python3-xcbgen libpulse-dev libmpdclient2 desktop-file-utils zsync
 
-        chmod +x ./polybar-AppImage.sh
-        ./polybar-AppImage.sh
+        chmod +x ./*-appimage.sh && ./*-appimage.sh
         mkdir dist
-        mv *AppImage dist/
+        mv *.AppImage* dist/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Polybar-x86_64.AppImage
+        name: Polybar.AppImage
         path: 'dist'
         
   release:
@@ -44,7 +43,7 @@ jobs:
       steps:
         - uses: actions/download-artifact@v4
           with:
-            name: Polybar-x86_64.AppImage
+            name: Polybar.AppImage
 
         - name: release
           uses: marvinpinto/action-automatic-releases@latest
@@ -54,5 +53,5 @@ jobs:
             prerelease: false
             draft: false
             files: |
-              *.AppImage
+              *.AppImage*
             repo_token: ${{ secrets.GITHUB_TOKEN }}
