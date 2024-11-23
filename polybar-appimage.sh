@@ -79,7 +79,7 @@ fi
 EOF
 chmod +x ./AppRun
 ./sharun -g
-VERSION=$(./shared/bin/polybar --version | awk 'FNR == 1 {print $2}')
+VERSION="$(./bin/polybar --version | awk 'FNR==1 {print $2}')"
 
 # Desktop
 cat >> ./"$APP.desktop" << 'EOF'
