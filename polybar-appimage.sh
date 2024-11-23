@@ -77,7 +77,8 @@ else
 	echo "run multiple polybar instances with a single command"
 fi
 EOF
-chmod a+x ./AppRun
+chmod +x ./AppRun
+./sharun -g
 VERSION=$(./shared/bin/polybar --version | awk 'FNR == 1 {print $2}')
 
 # Desktop
