@@ -10,11 +10,13 @@ VERSION="$(cat ~/version)"
 export DESKTOP=DUMMY
 export UPINFO="gh-releases-zsync|${GITHUB_REPOSITORY%/*}|${GITHUB_REPOSITORY#*/}|latest|*$ARCH.AppImage.zsync"
 export OUTNAME=polybar-"$VERSION"-anylinux-"$ARCH".AppImage
+export PATH_MAPPING='/etc/polybar:${SHARUN_DIR}/etc/polybar'
 
 # Deploy dependencies
 wget --retry-connrefused --tries=30 "$SHARUN" -O ./quick-sharun
 chmod +x ./quick-sharun
 ./quick-sharun /usr/bin/polybar*
+cp -rv /etc/polybar ./AppDir/etc
 
 # MAKE APPIMAGE WITH URUNTIME
 wget --retry-connrefused --tries=30 "$URUNTIME" -O ./uruntime2appimage
