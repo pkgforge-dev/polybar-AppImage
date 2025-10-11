@@ -40,7 +40,6 @@ cat /etc/makepkg.conf
 
 git clone https://aur.archlinux.org/polybar-git.git ./polybar && (
 	cd ./polybar
-	sed -i -e "s|x86_64|$ARCH|" ./PKGBUILD
 	makepkg -fs --noconfirm --skippgpcheck
 	ls -la .
 	pacman --noconfirm -U ./*.pkg.tar.*
