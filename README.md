@@ -1,15 +1,32 @@
-# polybar-AppImage
-Unofficial AppImage of polybar: https://github.com/polybar/polybar
+# polybar-AppImage 🐧
+
+[![GitHub Downloads](https://img.shields.io/github/downloads/pkgforge-dev/polybar-AppImage/total?logo=github&label=GitHub%20Downloads)](https://github.com/pkgforge-dev/polybar-AppImage/releases/latest)
+[![CI Build Status](https://github.com//pkgforge-dev/polybar-AppImage/actions/workflows/blank.yml/badge.svg)](https://github.com/pkgforge-dev/polybar-AppImage/releases/latest)
+
+* [Latest Stable Release](https://github.com/pkgforge-dev/polybar-AppImage/releases/latest)
+
+---
+
+AppImage made using [sharun](https://github.com/VHSgunzo/sharun), which makes it extremely easy to turn any binary into a portable package without using containers or similar tricks.
 
 **This AppImage bundles everything and should work on any linux distro, even on musl based ones.**
 
-Works like the regular polybar, by default running the appimage does the same as running the regular `polybar` binary. 
-If you want to use the `polybar-msg` binary, then you would need to pass the arg `msg` to the appimage, for example: 
+It is possible that this appimage may fail to work with appimagelauncher, I recommend these alternatives instead: 
 
-`polybar-msg cmd restart` would be `nameofappimage msg cmd restart` instead.
+* [AM](https://github.com/ivan-hc/AM) `am -i polybar` or `appman -i polybar`
 
-You can also symlink the appimage to `PATH` with the name `polybar-msg` and that way it automatically detects and launches `polybar-msg` without extra arguments.
+* [dbin](https://github.com/xplshn/dbin) `dbin install polybar.appimage`
 
-It is possible that this appimage may fail to work with appimagelauncher, I recommend this alternative instead: https://github.com/ivan-hc/AM
+* [soar](https://github.com/pkgforge/soar) `soar install polybar`
 
-This appimage works without fuse2 as it can use fuse3 instead.
+This appimage works without fuse2 as it can use fuse3 instead, it can also work without fuse at all thanks to the [uruntime](https://github.com/VHSgunzo/uruntime)
+
+<details>
+  <summary><b><i>raison d'être</i></b></summary>
+    <img src="https://github.com/user-attachments/assets/d40067a6-37d2-4784-927c-2c7f7cc6104b" alt="Inspiration Image">
+  </a>
+</details>
+
+---
+
+More at: [AnyLinux-AppImages](https://pkgforge-dev.github.io/Anylinux-AppImages/) 
